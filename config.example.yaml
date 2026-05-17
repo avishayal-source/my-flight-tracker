@@ -1,0 +1,19 @@
+route:
+  origin: TLV
+  destination: VIE
+
+search:
+  horizon_days: 30
+  # First departure date = today + N (useful when near-term Google UI is flaky)
+  departure_start_offset_days: 0
+  direct_only: true
+  adults: 2
+  cabin: ECONOMY
+  currency: USD
+
+ingest:
+  # Production-ish: 1800-3600. Debug: 30-60
+  interval_seconds: 3600
+
+database:
+  path: data/flights.duckdb

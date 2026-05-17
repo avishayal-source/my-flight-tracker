@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "flights-tracker": {
+      "command": "C:\\Users\\Avishay\\projects\\agents-mcp-intensive\\.venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Users\\Avishay\\projects\\agents-mcp-intensive\\scripts\\run_flights_mcp.py"
+      ],
+      "cwd": "C:\\Users\\Avishay\\projects\\agents-mcp-intensive"
+    }
+  }
+}

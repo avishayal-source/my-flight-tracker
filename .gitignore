@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/warehouse.duckdb
+data/flights.duckdb
+data/debug/
+config.yaml
+traces/*.jsonl
+.pytest_cache/
