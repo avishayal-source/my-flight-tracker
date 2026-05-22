@@ -125,15 +125,13 @@ def departure_date_price_over_runs(direction: str, departure_date: str) -> str:
     try:
         rows = con.execute(
             """
-            SELECT o.run_id, r.started_at,
-                   MIN(o.price_total_usd) AS price,
-                   arg_min(o.carrier_code, o.price_total_usd) AS carrier,
-                   arg_min(o.flight_number, o.price_total_usd) AS flight
+            SELECT DISTINCT ON (o.run_id)
+                   o.run_id, r.started_at, o.price_total_usd,
+                   o.carrier_code, o.flight_number
             FROM offers o
             JOIN scrape_runs r ON r.run_id = o.run_id
             WHERE o.direction = ? AND o.departure_date = ?::DATE
-            GROUP BY o.run_id, r.started_at
-            ORDER BY r.started_at
+            ORDER BY o.run_id, o.price_total_usd ASC, r.started_at
             """,
             [direction, departure_date],
         ).fetchall()
@@ -177,13 +175,13 @@ def price_vs_days_to_departure(
         rows = con.execute(
             f"""
             SELECT
-                DATE_DIFF('day', CAST(o.fetched_at AS DATE), o.departure_date) AS days_to_departure,
+                (o.departure_date - o.fetched_at::date) AS days_to_departure,
                 MIN(o.price_total_usd) AS min_price,
                 AVG(o.price_total_usd) AS avg_price,
                 COUNT(*) AS n_offers
             FROM offers o
             WHERE o.direction = ?
-              AND DATE_DIFF('day', CAST(o.fetched_at AS DATE), o.departure_date) >= 0
+              AND (o.departure_date - o.fetched_at::date) >= 0
               {run_clause}
             GROUP BY 1
             ORDER BY 1 DESC

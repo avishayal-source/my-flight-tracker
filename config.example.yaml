@@ -16,4 +16,5 @@ ingest:
   interval_seconds: 3600
 
 database:
+  # Legacy field; production uses DATABASE_URL (Neon Postgres) from .env
   path: data/flights.duckdb
