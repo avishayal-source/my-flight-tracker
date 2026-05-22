@@ -64,13 +64,19 @@ def connect() -> Iterator[PgConnection]:
         conn.close()
 
 
-def init_db() -> None:
-    sql = SCHEMA_PATH.read_text(encoding="utf-8")
-    statements = [
-        s.strip()
-        for s in re.split(r";\s*\n", sql)
-        if s.strip() and not s.strip().startswith("--")
+def _schema_statements() -> list[str]:
+    """Split schema.sql into executable statements (header comments must not drop CREATEs)."""
+    lines = [
+        ln
+        for ln in SCHEMA_PATH.read_text(encoding="utf-8").splitlines()
+        if ln.strip() and not ln.strip().startswith("--")
     ]
+    sql = "\n".join(lines)
+    return [s.strip() for s in re.split(r";\s*\n", sql) if s.strip()]
+
+
+def init_db() -> None:
+    statements = _schema_statements()
     with psycopg.connect(database_url()) as conn:
         with conn.cursor() as cur:
             for stmt in statements:
@@ -86,8 +92,7 @@ def next_run_id(con: PgConnection) -> int:
 
 
 def print_stats() -> None:
-    con = connect()
-    try:
+    with connect() as con:
         ingest = con.execute("SELECT COUNT(*) FROM ingest_runs").fetchone()[0]
         runs = con.execute("SELECT COUNT(*) FROM scrape_runs").fetchone()[0]
         offers = con.execute("SELECT COUNT(*) FROM offers").fetchone()[0]
@@ -114,11 +119,13 @@ def print_stats() -> None:
                 print(
                     f"  ingest {row[0]} | {row[1]} | {row[2]} | {row[3]} | records={row[4]}"
                 )
-    finally:
-        con.close()
 
 
 def main() -> None:
+    from dotenv import load_dotenv
+
+    load_dotenv(ROOT / ".env")
+
     parser = argparse.ArgumentParser(prog="flights.db")
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("init", help="Create Postgres tables")
