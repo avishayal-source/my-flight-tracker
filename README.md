@@ -69,6 +69,13 @@ Repo: [avishayal-source/my-flight-tracker](https://github.com/avishayal-source/m
 
 Manual run: **Actions** → workflow → **Run workflow**.
 
+### If ingest fails on GitHub Actions
+
+1. **Ignore the Node.js 20 deprecation banner** — that is a warning, not the failure. The real error is under the **Run ingest** step (red X).
+2. Common causes: Google blocking datacenter IPs, Playwright timeout, or missing/wrong `DATABASE_URL` secret.
+3. On failure, download the **ingest-debug-*** artifact (screenshots in `data/debug/`).
+4. CI uses `--max-days 7` (not 14) to stay within the job timeout.
+
 ## Docker
 
 ```bash

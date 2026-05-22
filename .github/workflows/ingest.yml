@@ -5,16 +5,23 @@ on:
     - cron: "0 */2 * * *"
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   ingest:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+          cache: pip
+
+      - name: Prepare config
+        run: cp config.example.yaml config.yaml
 
       - name: Install dependencies
         run: |
@@ -31,6 +38,15 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           GOOGLE_HEADLESS: "true"
+          GOOGLE_FETCH_PAUSE_SECONDS: "5"
         run: |
           python -m flights.ingest --once --provider google \
-            --max-days 14 --start-offset-days 3
+            --max-days 7 --start-offset-days 3
+
+      - name: Upload debug screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingest-debug-${{ github.run_id }}
+          path: data/debug/
+          if-no-files-found: ignore
