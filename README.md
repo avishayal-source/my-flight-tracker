@@ -7,7 +7,7 @@ Track **direct** economy flights for **2 passengers** (USD), store history in **
 ```mermaid
 flowchart LR
   subgraph gha [GitHub Actions]
-    W1[ingest.yml every 2h]
+    W1[ingest.yml every 4h]
     W2[alert.yml every 15m]
   end
   subgraph app [Python]
@@ -64,7 +64,7 @@ Repo: [avishayal-source/my-flight-tracker](https://github.com/avishayal-source/m
 
 | Workflow | Schedule (UTC) | Command |
 |----------|----------------|---------|
-| `ingest.yml` | `0 */2 * * *` | Google ingest, 14 days from offset 3 |
+| `ingest.yml` | `17 */4 * * *` (~6×/day) | Google ingest, 7 days from offset 3 |
 | `alert.yml` | `*/15 * * * *` | Check DB, email on **new** alerts |
 
 Manual run: **Actions** → workflow → **Run workflow**.
