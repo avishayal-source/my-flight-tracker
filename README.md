@@ -75,6 +75,7 @@ Manual run: **Actions** → workflow → **Run workflow**.
 2. Common causes: Google blocking datacenter IPs, Playwright timeout, or missing/wrong `DATABASE_URL` secret.
 3. On failure, download the **ingest-debug-*** artifact (screenshots in `data/debug/`).
 4. CI uses `--max-days 7` (not 14) to stay within the job timeout.
+5. Ingest is scheduled **every 4 hours** (`17 */4 * * *` UTC), not every 2h — GitHub often drops `:00` cron slots under load; ~4–6 successful runs/day is normal.
 
 ## Docker
 

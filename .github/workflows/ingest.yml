@@ -2,7 +2,8 @@ name: Ingest flights
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    # UTC every 4h at :17 (avoids :00 peak load; ~6 runs/day)
+    - cron: "17 */4 * * *"
   workflow_dispatch:
 
 env:
