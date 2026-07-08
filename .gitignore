@@ -8,3 +8,4 @@ data/debug/
 config.yaml
 traces/*.jsonl
 .pytest_cache/
+coaching-records-pwa/
