@@ -85,6 +85,22 @@ docker run --env-file .env -e JOB=ingest my-flight-tracker
 docker run --env-file .env -e JOB=alert my-flight-tracker
 ```
 
+## Visualization dashboard
+
+Interactive charts (requires `DATABASE_URL` in `.env`):
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dashboard.txt
+.\.venv\Scripts\python.exe -m streamlit run flights\viz_app.py
+```
+
+The dashboard includes:
+
+- Prices by departure date (overlay by `run_id`)
+- Prices over time for a selected departure date (by flight)
+- Daily minimum markers + threshold line
+- Heatmap of min price by `run_id × departure_date`
+
 ## MCP & CLI agent (optional)
 
 Cursor MCP: `flights-tracker` via `scripts/run_flights_mcp.py` (requires `DATABASE_URL`).
