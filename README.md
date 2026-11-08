@@ -87,19 +87,27 @@ docker run --env-file .env -e JOB=alert my-flight-tracker
 
 ## Visualization dashboard
 
-Interactive charts (requires `DATABASE_URL` in `.env`):
+Interactive Streamlit + Plotly dashboard over the Neon data.
+
+![Price dashboard: recent ingest runs and prices by departure date per direction](docs/images/dashboard.png)
+
+*Real data, June 2026. Each line is one ingest run; the left panel is TLV→VIE and the right is VIE→TLV.*
+
+Run it (requires `DATABASE_URL` in `.env`):
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-dashboard.txt
 .\.venv\Scripts\python.exe -m streamlit run flights\viz_app.py
 ```
 
-The dashboard includes:
+| View | What it answers |
+|------|-----------------|
+| **Price by departure date** (one line per ingest run) | Which departure days are cheap, and do runs agree? |
+| **Price over time** (pick a departure date) | For one departure day, did each flight get cheaper or pricier between scrapes? |
+| **Lowest daily price markers** + threshold line | Which days dipped below the alert threshold ($250)? |
+| **Heatmap** (`run_id × departure_date`) | Where are the cheapest run/date pairs at a glance? |
 
-- Prices by departure date (overlay by `run_id`)
-- Prices over time for a selected departure date (by flight)
-- Daily minimum markers + threshold line
-- Heatmap of min price by `run_id × departure_date`
+The sidebar filters by direction, ingest runs, departure date range, specific flights (carrier + number), and the low-price threshold.
 
 ## MCP & CLI agent (optional)
 
